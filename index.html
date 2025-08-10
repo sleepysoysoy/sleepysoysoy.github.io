@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Phaser Game</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: black;
+      }
+      canvas {
+        display: block;
+      }
+     #start {
+      position: fixed;
+      top: 10px;      /* distance from top */
+      left: 50%;      /* center horizontally */
+      transform: translateX(-50%);
+      z-index: 1000;  /* stay on top if needed */
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+.black-cover {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: black;
+      z-index: 9999; /* Ensure it’s on top */
+    }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <br/>
+<audio id="bg-music" loop>
+  <source src="fav_piano_song.mp3" type="audio/mpeg">
+</audio>
+
+    <audio id="letter_open">
+  <source src="open_letter.wav" type="audio/wav">
+    </audio>
+
+    <audio id="letter_close">
+  <source src="close_letter.wav" type="audio/wav">
+    </audio>
+<div class="black-cover" id="cover">
+
+<button id="start">drink your latte</button>
+
+</div>
+<img 
+  src="latte.png" 
+  id="latte"
+  style="
+      display: none;
+    position: fixed;
+    top: 60vh;
+    left: 64vw;
+    height: 32px;
+    width: 24px;
+    z-index: 9999;"
+  onclick="playOpenLetter()"
+/>
+
+<button
+  id="cheats"
+  onclick="setCheats()"
+  class="fixed top-4 right-4 z-50 bg-white hover:bg-gray-100 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+>
+  cheats
+</button>
+
+<img src="letter.png" id="letter"
+     style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+            z-index:9999;" onclick="playCloseLetter()">
+
+<script>
+  const cover = document.getElementById('cover')
+  const latte = document.getElementById('latte')
+  const letter = document.getElementById('letter')
+const latteDistBox = document.getElementById("cheats")
+
+  var dist = 10000000;
+
+    
+  const cheats = document.getElementById('cheats')
+
+  var closable = false;
+
+  const start = document.getElementById('start')
+
+  start.addEventListener('click', () => {
+    const music = document.getElementById('bg-music');
+    start.style.display = "none"
+      cover.style.display = "none"
+    latte.style.display = "block"
+    music.play();
+  });
+
+    document.addEventListener("mousemove", function(event) {
+      const xCoord = event.clientX;
+      const yCoord = event.clientY;
+
+      const rect = latte.getBoundingClientRect();
+
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;     
+
+    dist = Math.round(Math.sqrt(Math.abs(xCoord - centerX) + Math.abs(yCoord - centerY)))
+
+    })
+
+
+
+    // inner html stuff
+
+  function applyZoomCompensation() {
+    const zoom = window.devicePixelRatio || 1;
+    const originalWidth = 48;
+    const originalHeight = 64;
+
+    latte.style.width = (originalWidth / zoom) + 'px';
+    latte.style.height = (originalHeight / zoom) + 'px';
+  }
+
+
+    function playOpenLetter() {
+      const audio = document.getElementById("letter_open");
+    letter.style.display = "block";
+    closable = true;
+      audio.play()
+    }
+
+    function playCloseLetter() {
+    console.log("closing letter")
+      const audio = document.getElementById("letter_close");
+    closable = false;
+    letter.style.display = "none";
+      audio.play()
+    }
+
+  function setDistance() {
+    latteDistBox.innerHTML = "latte distance: " + dist;
+  }
+
+  function setCheats() {
+setInterval(setDistance, 100);
+  }
+
+  applyZoomCompensation();
+  window.addEventListener('resize', applyZoomCompensation);
+</script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
